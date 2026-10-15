@@ -4,6 +4,7 @@
   "description": "Det här är ditt privata GitLab-repo för kursens tredje laborationsuppgift.",
   "main": "index.js",
   "scripts": {
+    "start": "node src/Main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
