@@ -15,9 +15,9 @@ export class Combat {
     /**
      * Creates new combat encounter with default values.
      */
-    constructor() {
-        this.#player = new Player()
-        this.#monster = new Monster()
+    constructor(player = new Player(), monster = new Monster()) {
+        this.#player = player
+        this.#monster = monster
     }
 
 
