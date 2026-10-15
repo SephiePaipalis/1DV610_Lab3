@@ -1,4 +1,3 @@
-
 /**
  * Represents the player and manages their health.
  */
