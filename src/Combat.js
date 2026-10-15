@@ -1,4 +1,6 @@
 import { RandomGenerator, Dice } from 'dice-rng-toolkit'
+import { Player } from './Player.js'
+import { Monster } from './Monster.js'
 
 const rng = new RandomGenerator()
 const damageDie = new Dice(6)
@@ -7,15 +9,15 @@ const damageDie = new Dice(6)
  * Manages player and monster health during combat.
  */
 export class Combat {
-    #playerHealth
-    #monsterHealth
+    #player
+    #monster
 
     /**
      * Creates new combat encounter with default values.
      */
     constructor() {
-        this.#playerHealth = 20
-        this.#monsterHealth = 12
+        this.#player = new Player()
+        this.#monster = new Monster()
     }
 
 
@@ -28,11 +30,11 @@ export class Combat {
      */
     attackMonster() {
         const damage = damageDie.roll(rng)
-        this.#monsterHealth = Math.max(0, this.#monsterHealth - damage)
+        this.#monster.takeDamage(damage)
 
         return {
             damage,
-            monsterHealth: this.#monsterHealth
+            monsterHealth: this.#monster.getHealth()
         }
     }
 
@@ -48,11 +50,11 @@ export class Combat {
         const damage = damageDie.roll(rng)
         const actualDamage = isDefending ? Math.ceil(damage / 2) : damage
 
-        this.#playerHealth = Math.max(0, this.#playerHealth - actualDamage)
+        this.#player.takeDamage(actualDamage)
 
         return {
             damage: actualDamage,
-            playerHealth: this.#playerHealth
+            playerHealth: this.#player.getHealth()
         }
     }
 
@@ -62,7 +64,7 @@ export class Combat {
      * @returns {number} Player's remaining health.
      */
     getPlayerHealth() {
-        return this.#playerHealth
+        return this.#player.getHealth()
     }
 
     /**
@@ -71,7 +73,7 @@ export class Combat {
      * @returns {number} Monster's remaining health.
      */
     getMonsterHealth() {
-        return this.#monsterHealth
+        return this.#monster.getHealth()
     }
 
     /**
@@ -80,6 +82,6 @@ export class Combat {
      * @returns {boolean} - True if player/monster has zero health.
      */
     isOver() {
-        return this.#playerHealth <= 0 || this.#monsterHealth <= 0
+        return this.#player.isDefeated() || this.#monster.isDefeated()
     }
 }
