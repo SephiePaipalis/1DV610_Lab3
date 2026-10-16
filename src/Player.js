@@ -7,6 +7,7 @@ export class Player {
     #experience
     #level
     #healingPotions
+    #gold
 
     /**
      * Creates a player with specified starting health.
@@ -19,6 +20,7 @@ export class Player {
         this.#experience = 0
         this.#level = 1
         this.#healingPotions = 3
+        this.#gold = 0
     }
 
     /**
@@ -117,6 +119,43 @@ export class Player {
         this.#health = Math.min(this.#maxHealth, this.#health + 8)
         this.#healingPotions--
 
+        return true
+    }
+
+    /**
+    * Gets the player's current gold.
+    *
+    * @returns {number} The player's gold.
+    */
+    getGold() {
+        return this.#gold
+    }
+
+    /**
+     * Adds gold to the player's total.
+     *
+     * @param {number} amount - Amount of gold earned.
+     */
+    earnGold(amount) {
+        if (amount <= 0) {
+            return
+        }
+
+        this.#gold += amount
+    }
+
+    /**
+     * Spends gold if the player can afford the cost.
+     *
+     * @param {number} amount - Amount of gold to spend.
+     * @returns {boolean} - True if the gold was spent.
+     */
+    spendGold(amount) {
+        if (amount <= 0 || this.#gold < amount) {
+            return false
+        }
+
+        this.#gold -= amount
         return true
     }
 }

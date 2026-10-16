@@ -78,6 +78,7 @@ async function exploreCity(player) {
         console.log(`\nHealth: ${player.getHealth()}/${player.getMaxHealth()}`)
         console.log(`Level: ${player.getLevel()} | XP: ${player.getExperience()}`)
         console.log(`Healing potions: ${player.getHealingPotions()}`)
+        console.log(`Gold: ${player.getGold()}`)
 
         output.write('Choose a direction (W/A/S/D) or Q to quit exploring: ')
         const input = await readKeypress()
@@ -106,10 +107,14 @@ async function exploreCity(player) {
             }
 
             const prevLevel = player.getLevel()
+            const goldReward = monster.getGoldReward()
 
             player.gainExperience(monster.getExperienceReward())
             console.log(`You earned ${monster.getExperienceReward()} XP!`)
             console.log(`Total XP: ${player.getExperience()}`)
+
+            player.earnGold(goldReward)
+            console.log(`You earned ${goldReward} gold!`)
 
             if (player.getLevel() > prevLevel) {
                 console.log('You leveled up!')
