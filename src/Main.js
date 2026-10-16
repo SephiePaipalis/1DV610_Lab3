@@ -96,7 +96,7 @@ async function exploreCity(player) {
         }
 
         if (shouldEncounterMonster()) {
-            const monster = new Monster()
+            const monster = Monster.createRandom()
             const combat = new Combat(player, monster)
 
             await runCombat(combat, player)
@@ -105,9 +105,17 @@ async function exploreCity(player) {
                 return
             }
 
-            player.gainExperience(10)
-            console.log('You earned 10 XP')
+            const prevLevel = player.getLevel()
+
+            player.gainExperience(monster.getExperienceReward())
+            console.log(`You earned ${monster.getExperienceReward()} XP!`)
             console.log(`Total XP: ${player.getExperience()}`)
+
+            if (player.getLevel() > prevLevel) {
+                console.log('You leveled up!')
+                console.log(`You are now level ${player.getLevel()}!`)
+                console.log(`Your maximum health has increased to ${player.getMaxHealth()}!`)
+            }
         }
     }
 }
@@ -163,7 +171,7 @@ async function runCombat(combat, player) {
                 console.log(`The monster deals ${monsterResult.damage} damage!`)
             }
 
-        } else if (action ==='DEFEND') {
+        } else if (action === 'DEFEND') {
             const result = combat.monsterAttack(true)
             console.log(`You defend! The monster deals ${result.damage} damage.`)
 

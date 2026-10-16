@@ -19,7 +19,7 @@ export class Combat {
         this.#player = player
         this.#monster = monster
 
-        console.log('\nYou stumbled upon a feral cat, it attacks!')
+        console.log(`\nYou encountered a ${this.#monster.getName()}! It attacks!`)
     }
 
 
@@ -49,7 +49,10 @@ export class Combat {
      * @returns -
      */
     monsterAttack(isDefending = false) {
-        const damage = damageDie.roll(rng)
+        const minDamage = this.#monster.getMinAttackDamage()
+        const maxDamage = this.#monster.getMaxAttackDamage()
+        const damageRange = new Dice(maxDamage - minDamage + 1)
+        const damage = damageRange.roll(rng) + minDamage - 1
         const actualDamage = isDefending ? Math.ceil(damage / 2) : damage
 
         this.#player.takeDamage(actualDamage)
@@ -59,6 +62,7 @@ export class Combat {
             playerHealth: this.#player.getHealth()
         }
     }
+
 
     /**
      * Uses a healing potion during combat.
