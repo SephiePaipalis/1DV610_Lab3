@@ -75,7 +75,9 @@ async function exploreCity(player) {
     console.log('Use W/A/S/D to move. Enter Q to return to the main menu.')
 
     while (!player.isDefeated()) {
-        console.log(`\nYour health: ${player.getHealth()}`)
+        console.log(`\nHealth: ${player.getHealth()}/${player.getMaxHealth()}`)
+        console.log(`Level: ${player.getLevel()} | XP: ${player.getExperience()}`)
+        console.log(`Healing potions: ${player.getHealingPotions()}`)
 
         output.write('Choose a direction (W/A/S/D) or Q to quit exploring: ')
         const input = await readKeypress()
@@ -133,11 +135,14 @@ async function showMenu() {
  */
 async function runCombat(combat, player) {
     while (!combat.isOver()) {
-        console.log(`Your health: ${player.getHealth()}`)
+
+        console.log(`Health: ${player.getHealth()}/${player.getMaxHealth()}`)
+        console.log(`Level: ${player.getLevel()} | XP: ${player.getExperience()}`)
+        console.log(`Healing potions: ${player.getHealingPotions()}`)
         console.log(`Monster health: ${combat.getMonsterHealth()}`)
         console.log('1. Attack')
         console.log('2. Defend')
-        console.log('3. Explore')
+        console.log('3. Use healing potion')
 
         output.write('Choose an action:')
         const inputChoice = await readKeypress()
@@ -153,14 +158,25 @@ async function runCombat(combat, player) {
                 const monsterResult = combat.monsterAttack()
                 console.log(`The monster deals ${monsterResult.damage} damage!`)
             }
-        } else if (action === 'DEFEND') {
+
+        } else if (action ==='DEFEND') {
             const result = combat.monsterAttack(true)
             console.log(`You defend! The monster deals ${result.damage} damage.`)
-        } else if (action === 'EXPLORE') {
-            console.log("You can't explore while fighting a monster!")
+
+        } else if (action === 'USE_POTION') {
+            const result = combat.useHealingPotion()
+
+            if (result.used) {
+                console.log('You used a healing potion and restored health!')
+                console.log(`Health: ${result.playerHealth}/${player.getMaxHealth()}`)
+                console.log(`Potions remaining: ${result.healingPotions}`)
+            } else {
+                console.log('You cannot use a healing potion right now!')
+            }
         } else {
             console.log('Invalid action. Choose 1, 2, or 3.')
         }
+
     }
 
     if (player.isDefeated()) {

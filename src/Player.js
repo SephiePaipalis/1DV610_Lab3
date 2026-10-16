@@ -1,8 +1,12 @@
 /**
- * Represents the player and manages their health.
+ * Represents the player and manages health, experience, levels and potions.
  */
 export class Player {
     #health
+    #maxHealth
+    #experience
+    #level
+    #healingPotions
 
     /**
      * Creates a player with specified starting health.
@@ -10,7 +14,11 @@ export class Player {
      * @param {number} health - Player starting health.
      */
     constructor(health = 20) {
-        this.#health = Math.max(0, health)
+        this.#maxHealth = Math.max(0, health)
+        this.#health = this.#maxHealth
+        this.#experience = 0
+        this.#level = 1
+        this.#healingPotions = 3
     }
 
     /**
@@ -32,11 +40,83 @@ export class Player {
     }
 
     /**
+     * Gets the player's maximum health.
+     *
+     * @returns {number} The player's maximum health.
+     */
+    getMaxHealth() {
+        return this.#maxHealth
+    }
+
+    /**
      * Checks whether the player has run out of health.
      *
      * @returns {boolean} True if player health is zero.
      */
     isDefeated() {
         return this.#health === 0
+    }
+
+    /**
+     * Adds experience and increases the player's level.
+     *
+     * Every 30 experience points grants one level.
+     *
+     * @param {number} amount - Experience points earned.
+     */
+    gainExperience(amount) {
+        if (amount <= 0) {
+            return
+        }
+
+        this.#experience += amount
+
+        while (this.#experience >= this.#level * 30) {
+            this.#level++
+            this.#maxHealth += 5
+        }
+    }
+
+    /**
+     * Gets the player's total experience.
+     *
+     * @returns {number} The player's total experience points.
+     */
+    getExperience() {
+        return this.#experience
+    }
+
+    /**
+     * Gets the player's current level.
+     *
+     * @returns {number} The player's level.
+     */
+    getLevel() {
+        return this.#level
+    }
+
+    /**
+     * Gets the number of remaining healing potions.
+     *
+     * @returns {number} The number of healing potions.
+     */
+    getHealingPotions() {
+        return this.#healingPotions
+    }
+
+    /**
+     * Uses a healing potion if the player can benefit from it.
+     *
+     * @returns {boolean} True if a potion was used, otherwise false.
+     */
+    useHealingPotion() {
+        if (this.#healingPotions === 0 || this.#health === this.#maxHealth) {
+            return false
+        }
+
+        this.#health = Math.min(this.#maxHealth, this.#health + 8)
+        this.#healingPotions--
+
+        return true
     }
 }

@@ -59,6 +59,21 @@ export class Combat {
     }
 
     /**
+     * Uses a healing potion during combat.
+     *
+     * @returns {{ used: boolean, playerHealth: number, healingPotions: number }}
+     */
+    useHealingPotion() {
+        const used = this.#player.useHealingPotion()
+
+        return {
+            used,
+            playerHealth: this.#player.getHealth(),
+            healingPotions: this.#player.getHealingPotions()
+        }
+    }
+
+    /**
      * Get current player health.
      * 
      * @returns {number} Player's remaining health.
