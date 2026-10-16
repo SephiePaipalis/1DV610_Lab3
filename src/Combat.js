@@ -18,6 +18,8 @@ export class Combat {
     constructor(player = new Player(), monster = new Monster()) {
         this.#player = player
         this.#monster = monster
+
+        console.log('\nYou stumbled upon a feral cat, it attacks!')
     }
 
 

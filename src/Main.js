@@ -104,6 +104,10 @@ async function exploreCity(player) {
             if (player.isDefeated()) {
                 return
             }
+
+            player.gainExperience(10)
+            console.log('You earned 10 XP')
+            console.log(`Total XP: ${player.getExperience()}`)
         }
     }
 }
@@ -136,10 +140,10 @@ async function showMenu() {
 async function runCombat(combat, player) {
     while (!combat.isOver()) {
 
-        console.log(`Health: ${player.getHealth()}/${player.getMaxHealth()}`)
+        console.log(`Your HP: ${player.getHealth()}/${player.getMaxHealth()}`)
         console.log(`Level: ${player.getLevel()} | XP: ${player.getExperience()}`)
         console.log(`Healing potions: ${player.getHealingPotions()}`)
-        console.log(`Monster health: ${combat.getMonsterHealth()}`)
+        console.log(`Monster HP: ${combat.getMonsterHealth()}`)
         console.log('1. Attack')
         console.log('2. Defend')
         console.log('3. Use healing potion')
