@@ -9,6 +9,10 @@ const profile = new ControlProfile('Dungeon')
 const attack = new Action('ATTACK')
 const defend = new Action('DEFEND')
 const explore = new Action('EXPLORE')
+const moveNorth = new Action('MOVE_NORTH') 
+const moveWest = new Action('MOVE_WEST') 
+const moveSouth = new Action('MOVE_SOUTH') 
+const moveEast = new Action('MOVE_EAST') 
 
 /**
  * Register available actions with control profile.
@@ -16,6 +20,10 @@ const explore = new Action('EXPLORE')
 profile.addAction(attack)
 profile.addAction(defend)
 profile.addAction(explore)
+profile.addAction(moveNorth)
+profile.addAction(moveWest)
+profile.addAction(moveSouth)
+profile.addAction(moveEast)
 
 /**
  * Binds action to input.
@@ -23,6 +31,10 @@ profile.addAction(explore)
 profile.bindAction('ATTACK', '1')
 profile.bindAction('DEFEND', '2')
 profile.bindAction('EXPLORE', '3')
+profile.bindAction('MOVE_NORTH', 'w')
+profile.bindAction('MOVE_WEST', 'a')
+profile.bindAction('MOVE_SOUTH', 's')
+profile.bindAction('MOVE_EAST', 'd')
 
 /**
  * Register and activate profile.
@@ -38,6 +50,7 @@ controls.setActiveProfile('Dungeon')
  * @returns  {string | null} - Active action name, or null if no action paired.
  */
 export function getGameAction(input) {
+    input = input.toLowerCase()
     controls.press(input)
 
     const action = profile.getActionByInput(input)

@@ -2,6 +2,7 @@ import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { Combat } from './Combat.js'
 import { Player } from './Player.js'
+import { Monster } from './Monster.js'
 import { getGameAction } from './GameInput.js'
 import { RandomGenerator } from 'dice-rng-toolkit'
 
@@ -19,6 +20,68 @@ function shouldEncounterMonster() {
 
 
 /**
+ * Displays the message for a movement action.
+ *
+ * @param {string} action - The movement action.
+ * @returns {boolean} True if the action was a movement action.
+ */
+function movePlayer(action) {
+    if (action === 'MOVE_NORTH') {
+        console.log('You venture north.')
+    } else if (action === 'MOVE_WEST') {
+        console.log('You venture west.')
+    } else if (action === 'MOVE_SOUTH') {
+        console.log('You venture south.')
+    } else if (action === 'MOVE_EAST') {
+        console.log('You venture east.')
+    } else {
+        return false
+    }
+
+    return true
+}
+
+/**
+ * Lets the player explore the city and encounter monsters.
+ *
+ * @param {Player} player - The player exploring the city.
+ */
+async function exploreCity(player) {
+    console.log('You enter the mysterious streets of Cat City...')
+    console.log('Use W/A/S/D to move. Enter Q to return to the main menu.')
+
+    while (!player.isDefeated()) {
+        console.log(`\nYour health: ${player.getHealth()}`)
+
+        const input = await rl.question('Choose a direction (W/A/S/D) or Q to quit exploring: ')
+
+        if (input.toLowerCase() === 'q') {
+            console.log('You leave the streets and return to the main menu.')
+            return
+        }
+
+        const action = getGameAction(input)
+
+        if (!movePlayer(action)) {
+            console.log('Invalid direction. Please use W, A, S, or D.')
+            continue
+        }
+
+        if (shouldEncounterMonster()) {
+            const monster = new Monster()
+            const combat = new Combat(player, monster)
+
+            await runCombat(combat, player)
+
+            if (player.isDefeated()) {
+                return
+            }
+        }
+    }
+}
+
+
+/**
  * Displays main menu, asks player to choose an option.
  * 
  * @returns {string} - Option entered by player.
@@ -32,6 +95,51 @@ async function showMenu() {
     return rl.question('Choose an option: ')
 }
 
+
+/**
+ * Runs a combat encounter until either player/monster is defeated.
+ *
+ * @param {Combat} combat - Current combat encounter.
+ * @param {Player} player - The player participating in combat.
+ */
+async function runCombat(combat, player) {
+    while (!combat.isOver()) {
+        console.log(`Your health: ${player.getHealth()}`)
+        console.log(`Monster health: ${combat.getMonsterHealth()}`)
+        console.log('1. Attack')
+        console.log('2. Defend')
+        console.log('3. Explore')
+
+        const inputChoice = await rl.question('Choose an action: ')
+        const action = getGameAction(inputChoice)
+
+        if (action === 'ATTACK') {
+            const result = combat.attackMonster()
+
+            console.log(`You deal ${result.damage} damage!`)
+
+            if (!combat.isOver()) {
+                const monsterResult = combat.monsterAttack()
+                console.log(`The monster deals ${monsterResult.damage} damage!`)
+            }
+        } else if (action === 'DEFEND') {
+            const result = combat.monsterAttack(true)
+            console.log(`You defend! The monster deals ${result.damage} damage.`)
+        } else if (action === 'EXPLORE') {
+            console.log("You can't explore while fighting a monster!")
+        } else {
+            console.log('Invalid action. Choose 1, 2, or 3.')
+        }
+    }
+
+    if (player.isDefeated()) {
+        console.log('You have been defeated! Your adventure is over.')
+    } else {
+        console.log('You defeated the monster!')
+    }
+}
+
+
 /**
  * Runs main menu loop and handles player's choices.
  */
@@ -43,6 +151,8 @@ async function runGame() {
 
         if (choice === '1') {
             console.log('Starting a new adventure...')
+            const player = new Player()
+            await exploreCity(player)
         } else if (choice === '2') {
             console.log('<<<???|  HOW TO PLAY  |???>>>')
             console.log('Keep an eye on your health!')
