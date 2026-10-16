@@ -10,6 +10,30 @@ const rng = new RandomGenerator()
 const rl = readline.createInterface({ input, output })
 
 /**
+ * Reads a single keypress without requiring Enter.
+ *
+ * Falls back to line-based input when stdin is not an interactive terminal.
+ *
+ * @returns {string} The key pressed.
+ */
+async function readKeypress() {
+    if (!input.isTTY) {
+        const answer = await rl.question('Enter a key: ')
+        return answer.charAt(0).toLowerCase()
+    }
+
+    return new Promise((resolve) => {
+        function handleKeypress(key, details) {
+            input.removeListener('keypress', handleKeypress)
+            resolve(details && details.name ? details.name : key)
+        }
+
+        input.setRawMode(true)
+        input.once('keypress', handleKeypress)
+    })
+}
+
+/**
  * Determines whether the player encounters a monster.
  *
  * @returns {boolean} True if a monster is encountered.
@@ -53,7 +77,9 @@ async function exploreCity(player) {
     while (!player.isDefeated()) {
         console.log(`\nYour health: ${player.getHealth()}`)
 
-        const input = await rl.question('Choose a direction (W/A/S/D) or Q to quit exploring: ')
+        output.write('Choose a direction (W/A/S/D) or Q to quit exploring: ')
+        const input = await readKeypress()
+        console.log()
 
         if (input.toLowerCase() === 'q') {
             console.log('You leave the streets and return to the main menu.')
@@ -92,7 +118,10 @@ async function showMenu() {
     console.log('2. View instructions')
     console.log('3. Quit')
 
-    return rl.question('Choose an option: ')
+    output.write('Choose an option: ')
+    const choice = await readKeypress()
+    console.log()
+    return choice
 }
 
 
@@ -110,7 +139,9 @@ async function runCombat(combat, player) {
         console.log('2. Defend')
         console.log('3. Explore')
 
-        const inputChoice = await rl.question('Choose an action: ')
+        output.write('Choose an action:')
+        const inputChoice = await readKeypress()
+        console.log()
         const action = getGameAction(inputChoice)
 
         if (action === 'ATTACK') {
@@ -168,5 +199,9 @@ async function runGame() {
 try {
     await runGame()
 } finally {
+    if (input.isTTY) {
+        input.setRawMode(false)
+    }
+
     rl.close()
 }
