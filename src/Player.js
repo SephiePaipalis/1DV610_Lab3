@@ -20,7 +20,7 @@ export class Player {
         this.#experience = 0
         this.#level = 1
         this.#healingPotions = 3
-        this.#gold = 0
+        this.#gold = 10
     }
 
     /**
