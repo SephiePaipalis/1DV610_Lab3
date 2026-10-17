@@ -107,6 +107,19 @@ export class Player {
     }
 
     /**
+     * Adds healing potions to player inventory.
+     * 
+     * @param {*} amount - Number of potions to add.
+     */
+    addHealingPotions(amount) {
+        if (amount <= 0) {
+            return
+        }
+
+        this.#healingPotions += amount
+    }
+
+    /**
      * Uses a healing potion if the player can benefit from it.
      *
      * @returns {boolean} True if a potion was used, otherwise false.

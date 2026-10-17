@@ -36,10 +36,19 @@ async function readKeypress() {
 /**
  * Determines whether the player encounters a monster.
  *
- * @returns {boolean} True if a monster is encountered.
+ * @returns {boolean} - True if a monster is encountered.
  */
 function shouldEncounterMonster() {
     return rng.nextFloat() < 0.4
+}
+
+/**
+ * Determines whether the player encounters a shop.
+ * 
+ * @returns {boolean} - True if a shop is encountered.
+ */
+function shouldDiscoverShop() {
+    return rng.nextFloat() < 0.2
 }
 
 
