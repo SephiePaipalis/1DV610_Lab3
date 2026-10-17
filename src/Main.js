@@ -2,14 +2,17 @@ import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { Combat } from './Combat.js'
 import { Player } from './Player.js'
-import { Monster } from './Monster.js'
-import { Shop } from './Shop.js'
 import { getGameAction } from './GameInput.js'
-import { RandomGenerator } from 'dice-rng-toolkit'
+import { EncounterManager, EncounterRegistry, ENCOUNTERS } from './Encounters.js'
+import { handleShopEncounter } from './encounters/ShopEncounter.js'
+import { handleMonsterEncounter } from './encounters/MonsterEncounter.js'
 
-const rng = new RandomGenerator()
 const rl = readline.createInterface({ input, output })
-const shop = new Shop()
+const encounterManager = new EncounterManager(ENCOUNTERS)
+const encounterRegistry = new EncounterRegistry()
+
+encounterRegistry.register('SHOP', handleShopEncounter)
+encounterRegistry.register('MONSTER', handleMonsterEncounter)
 
 /**
  * Reads a single keypress without requiring Enter.
@@ -36,25 +39,6 @@ async function readKeypress() {
 }
 
 /**
- * Determines whether the player encounters a monster.
- *
- * @returns {boolean} - True if a monster is encountered.
- */
-function shouldEncounterMonster() {
-    return rng.nextFloat() < 0.4
-}
-
-/**
- * Determines whether the player encounters a shop.
- * 
- * @returns {boolean} - True if a shop is encountered.
- */
-function shouldDiscoverShop() {
-    return rng.nextFloat() < 0.2
-}
-
-
-/**
  * Displays the message for a movement action.
  *
  * @param {string} action - The movement action.
@@ -75,58 +59,6 @@ function movePlayer(action) {
 
     return true
 }
-
-
-/**
- * Displays shop menu and lets the player buy items.
- *
- * @param {Player} player - The player visiting the shop.
- * @param {Shop} shop - The shop the player is visiting.
- */
-async function visitShop(player, shop) {
-    console.log("\n||=$$$=|| THE CAT'S CAULDRON ||=$$$=||")
-    console.log("Welcome to the Shop!")
-
-    let shopping = true
-
-    while (shopping) {
-        console.log(`\nYour gold: ${player.getGold()}`)
-        console.log("Your healing potions: " + player.getHealingPotions())
-
-        const stock = shop.getStock()
-
-        for (let i = 0; i < stock.length; i++) {
-            console.log(`${i + 1}. ${stock[i].name} - ${stock[i].price} gold`)
-        }
-
-        console.log("Q. Leave shop")
-        output.write("Choose an item to buy: ")
-
-        const choice = await readKeypress()
-        console.log()
-
-        if (choice.toLowerCase() === 'q') {
-            shopping = false
-        } else {
-            const itemIndex = Number(choice) - 1
-
-            if (itemIndex >= 0 && itemIndex < stock.length) {
-                const purchased = shop.buyItem(stock[itemIndex].name, player)
-
-                if (purchased) {
-                    console.log(`You bought a ${stock[itemIndex].name}!`)
-                } else {
-                    console.log("You don't have enough gold for that item.")
-                }
-            } else {
-                console.log("Invalid choice. Please select an item or Q to leave.")
-            }
-        }
-    }
-
-    console.log("You leave the shop.")
-}
-
 
 /**
  * Lets the player explore the city and encounter monsters.
@@ -159,36 +91,15 @@ async function exploreCity(player) {
             continue
         }
 
-        if (shouldDiscoverShop()) {
-            console.log("\nYou discover a small shop tucked away in an alley!")
-            await visitShop(player, shop)
-        }
+        const encounter = encounterManager.getRandomEncounter()
 
-        if (shouldEncounterMonster()) {
-            const monster = Monster.createRandom()
-            const combat = new Combat(player, monster)
+        await encounterRegistry.execute(encounter, player, {
+            readKeypress,
+            runCombat
+        })
 
-            await runCombat(combat, player)
-
-            if (player.isDefeated()) {
-                return
-            }
-
-            const prevLevel = player.getLevel()
-            const goldReward = monster.getGoldReward()
-
-            player.gainExperience(monster.getExperienceReward())
-            console.log(`You earned ${monster.getExperienceReward()} XP!`)
-            console.log(`Total XP: ${player.getExperience()}`)
-
-            player.earnGold(goldReward)
-            console.log(`You earned ${goldReward} gold!`)
-
-            if (player.getLevel() > prevLevel) {
-                console.log('You leveled up!')
-                console.log(`You are now level ${player.getLevel()}!`)
-                console.log(`Your maximum health has increased to ${player.getMaxHealth()}!`)
-            }
+        if (player.isDefeated()) {
+            return
         }
     }
 }
