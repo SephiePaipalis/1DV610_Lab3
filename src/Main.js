@@ -1,18 +1,9 @@
 import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
-import { Combat } from './Combat.js'
 import { Player } from './Player.js'
-import { getGameAction } from './GameInput.js'
-import { EncounterManager, EncounterRegistry, ENCOUNTERS } from './Encounters.js'
-import { handleShopEncounter } from './encounters/ShopEncounter.js'
-import { handleMonsterEncounter } from './encounters/MonsterEncounter.js'
+import { exploreCity } from './Exploration.js'
 
 const rl = readline.createInterface({ input, output })
-const encounterManager = new EncounterManager(ENCOUNTERS)
-const encounterRegistry = new EncounterRegistry()
-
-encounterRegistry.register('SHOP', handleShopEncounter)
-encounterRegistry.register('MONSTER', handleMonsterEncounter)
 
 /**
  * Reads a single keypress without requiring Enter.
@@ -39,73 +30,6 @@ async function readKeypress() {
 }
 
 /**
- * Displays the message for a movement action.
- *
- * @param {string} action - The movement action.
- * @returns {boolean} True if the action was a movement action.
- */
-function movePlayer(action) {
-    if (action === 'MOVE_NORTH') {
-        console.log('\nYou venture north.')
-    } else if (action === 'MOVE_WEST') {
-        console.log('\nYou venture west.')
-    } else if (action === 'MOVE_SOUTH') {
-        console.log('\nYou venture south.')
-    } else if (action === 'MOVE_EAST') {
-        console.log('\nYou venture east.')
-    } else {
-        return false
-    }
-
-    return true
-}
-
-/**
- * Lets the player explore the city and encounter monsters.
- *
- * @param {Player} player - The player exploring the city.
- */
-async function exploreCity(player) {
-    console.log('You enter the mysterious streets of Cat City...')
-    console.log('Use W/A/S/D to move. Enter Q to return to the main menu.')
-
-    while (!player.isDefeated()) {
-        console.log(`\nHealth: ${player.getHealth()}/${player.getMaxHealth()}`)
-        console.log(`Level: ${player.getLevel()} | XP: ${player.getExperience()}`)
-        console.log(`Healing potions: ${player.getHealingPotions()}`)
-        console.log(`Gold: ${player.getGold()}`)
-
-        output.write('Choose a direction (W/A/S/D) or Q to quit exploring: ')
-        const input = await readKeypress()
-        console.log()
-
-        if (input.toLowerCase() === 'q') {
-            console.log('You leave the streets and return to the main menu.')
-            return
-        }
-
-        const action = getGameAction(input)
-
-        if (!movePlayer(action)) {
-            console.log('Invalid direction. Please use W, A, S, or D.')
-            continue
-        }
-
-        const encounter = encounterManager.getRandomEncounter()
-
-        await encounterRegistry.execute(encounter, player, {
-            readKeypress,
-            runCombat
-        })
-
-        if (player.isDefeated()) {
-            return
-        }
-    }
-}
-
-
-/**
  * Displays main menu, asks player to choose an option.
  * 
  * @returns {string} - Option entered by player.
@@ -122,67 +46,6 @@ async function showMenu() {
     return choice
 }
 
-
-/**
- * Runs a combat encounter until either player/monster is defeated.
- *
- * @param {Combat} combat - Current combat encounter.
- * @param {Player} player - The player participating in combat.
- */
-async function runCombat(combat, player) {
-    while (!combat.isOver()) {
-
-        console.log(`Your HP: ${player.getHealth()}/${player.getMaxHealth()}`)
-        console.log(`Level: ${player.getLevel()} | XP: ${player.getExperience()}`)
-        console.log(`Healing potions: ${player.getHealingPotions()}`)
-        console.log(`Monster HP: ${combat.getMonsterHealth()}`)
-        console.log('1. Attack')
-        console.log('2. Defend')
-        console.log('3. Use healing potion')
-
-        output.write('Choose an action:')
-        const inputChoice = await readKeypress()
-        console.log()
-        const action = getGameAction(inputChoice)
-
-        if (action === 'ATTACK') {
-            const result = combat.attackMonster()
-
-            console.log(`You deal ${result.damage} damage!`)
-
-            if (!combat.isOver()) {
-                const monsterResult = combat.monsterAttack()
-                console.log(`The monster deals ${monsterResult.damage} damage!`)
-            }
-
-        } else if (action === 'DEFEND') {
-            const result = combat.monsterAttack(true)
-            console.log(`You defend! The monster deals ${result.damage} damage.`)
-
-        } else if (action === 'USE_POTION') {
-            const result = combat.useHealingPotion()
-
-            if (result.used) {
-                console.log('You used a healing potion and restored health!')
-                console.log(`Health: ${result.playerHealth}/${player.getMaxHealth()}`)
-                console.log(`Potions remaining: ${result.healingPotions}`)
-            } else {
-                console.log('You cannot use a healing potion right now!')
-            }
-        } else {
-            console.log('Invalid action. Choose 1, 2, or 3.')
-        }
-
-    }
-
-    if (player.isDefeated()) {
-        console.log('You have been defeated! Your adventure is over.')
-    } else {
-        console.log('You defeated the monster!')
-    }
-}
-
-
 /**
  * Runs main menu loop and handles player's choices.
  */
@@ -195,7 +58,7 @@ async function runGame() {
         if (choice === '1') {
             console.log('Starting a new adventure...')
             const player = new Player()
-            await exploreCity(player)
+            await exploreCity(player, readKeypress)
         } else if (choice === '2') {
             console.log('<<<???|  HOW TO PLAY  |???>>>')
             console.log('Keep an eye on your health!')
