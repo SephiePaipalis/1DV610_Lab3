@@ -3,6 +3,7 @@ import { getGameAction } from './GameInput.js'
 import { EncounterManager, EncounterRegistry, ENCOUNTERS } from './Encounters.js'
 import { handleShopEncounter } from './encounters/ShopEncounter.js'
 import { handleMonsterEncounter } from './encounters/MonsterEncounter.js'
+import { handleMateEncounter } from './encounters/MateEncounter.js'
 import { Player } from './Player.js'
 import { runCombat } from './CombatInteraction.js'
 
@@ -11,6 +12,7 @@ const encounterRegistry = new EncounterRegistry()
 
 encounterRegistry.register('SHOP', handleShopEncounter)
 encounterRegistry.register('MONSTER', handleMonsterEncounter)
+encounterRegistry.register('MATE', handleMateEncounter)
 
 /**
  * Displays the message for a movement action.
@@ -66,7 +68,9 @@ export async function exploreCity(player, readKeypress) {
             continue
         }
 
-        const encounter = encounterManager.getRandomEncounter()
+        const encounter = encounterManager.getRandomEncounter(
+            player.getCombatVictories()
+        )
 
         await encounterRegistry.execute(encounter, player, {
             readKeypress,

@@ -29,13 +29,20 @@ export class EncounterManager {
     /**
      * Selects an encounter, or null if none occurs.
      *
+     * @param {number} combatVictories - Number of combat victories.
      * @returns {string|null} The encounter type, or null.
      */
-    getRandomEncounter() {
+    getRandomEncounter(combatVictories = 0) {
+        const encounters = [...this.#encounters]
+
+        if (combatVictories > 2) {
+            encounters.push({ type: 'MATE', chance: 0.25 })
+        }
+
         const roll = this.#rng.nextFloat()
         let cumulativeChance = 0
 
-        for (const encounter of this.#encounters) {
+        for (const encounter of encounters) {
             cumulativeChance += encounter.chance
 
             if (roll < cumulativeChance) {

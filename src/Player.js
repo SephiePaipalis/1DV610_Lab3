@@ -8,6 +8,7 @@ export class Player {
     #level
     #healingPotions
     #gold
+    #combatVictories
 
     /**
      * Creates a player with specified starting health.
@@ -21,6 +22,7 @@ export class Player {
         this.#level = 1
         this.#healingPotions = 3
         this.#gold = 10
+        this.#combatVictories = 0
     }
 
     /**
@@ -170,5 +172,21 @@ export class Player {
 
         this.#gold -= amount
         return true
+    }
+
+    /**
+     * Records a combat victory.
+     */
+    recordCombatVictory() {
+        this.#combatVictories++
+    }
+
+    /**
+     * Gets the number of combat victories.
+     * 
+     * @returns {number} - The number of combat victories.
+     */
+    getCombatVictories() {
+        return this.#combatVictories
     }
 }

@@ -17,6 +17,8 @@ export async function handleMonsterEncounter(player, { runCombat, readKeypress }
         return
     }
 
+    player.recordCombatVictory()
+
     const previousLevel = player.getLevel()
     const goldReward = monster.getGoldReward()
     const experienceReward = monster.getExperienceReward()
