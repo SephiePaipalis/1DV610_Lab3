@@ -58,8 +58,13 @@ async function runGame() {
         if (choice === '1') {
             console.log('Starting a new adventure...')
             const player = new Player()
-            await exploreCity(player, readKeypress)
+            const foundMate = await exploreCity(player, readKeypress)
+
+            if (foundMate) {
+                isRunning = false
+            }
         } else if (choice === '2') {
+
             console.log('<<<???|  HOW TO PLAY  |???>>>')
             console.log('Keep an eye on your health!')
         } else if (choice === '3') {

@@ -72,13 +72,21 @@ export async function exploreCity(player, readKeypress) {
             player.getCombatVictories()
         )
 
-        await encounterRegistry.execute(encounter, player, {
-            readKeypress,
-            runCombat
-        })
+        const encounterResult = await encounterRegistry.execute(
+            encounter,
+            player,
+            {
+                readKeypress,
+                runCombat
+            }
+        )
+
+        if (encounter === 'MATE' && encounterResult === true) {
+            return true
+        }
 
         if (player.isDefeated()) {
-            return
+            return false
         }
     }
 }
