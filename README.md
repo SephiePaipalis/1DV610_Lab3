@@ -1,38 +1,122 @@
-# Laboration 3 – Skriv en applikation med din och en annan students modul
+# Cat City Adventure
 
-Det här är ditt privata GitLab-repo för kursens tredje laborationsuppgift.
+Cat City Adventure is a terminal-based adventure game written in JavaScript for the 1DV610 Laboration 3 assignment. Explore the streets of Cat City, encounter and fight feral cats, collect rewards, and buy healing items to survive your adventure and find a mate.
 
-Fullständig uppgiftsbeskrivning, deadline, bedömningskriterier och regler finns på
-[kurssidan för Laboration 3](https://coursepress.lnu.se/kurser/introduktion-till-mjukvarukvalitet/examinationsuppgifter/laboration-3/).
-Det här repot är bara din arbetsyta för inlämningen och innehåller varken din applikations eller
-dina modulers kod. Applikationen ska versionshanteras i ett eget, publikt repo på GitHub, separat
-från modulernas repon.
+## Requirements
 
-## Kom igång
+The following functional requirements describe the application's expected behavior. Their IDs are used in `test_report.md` to connect requirements to test cases.
 
-1. Tagga din moduls L2-version med `laboration-2` och pusha taggen till modulens GitHub-repo,
-   innan du gör några ändringar i modulen. Kurssidan beskriver hur du hittar rätt commit.
-2. Välj en annan students modul från listan som anslås i kursens kanal på Zulip, skriven i samma
-   programmeringsspråk som din applikation.
-3. Skriv din applikation och versionshantera den med Git mot ett nytt, publikt repo på GitHub.
-   Beskriv applikationens vision och krav i dess `README.md`, tillsammans med hur den nås eller
-   installeras och körs.
-4. Förbättra din modul i modulens GitHub-repo, justera dess tester och undvik ändringar som bryter
-   bakåtkompatibiliteten.
-5. Flytta `TEST_REPORT.md` från det här repot till roten av applikationens GitHub-repo, komplettera
-   den där (på engelska – den ska följa med applikationens kod) och committa den tillsammans med
-   koden.
-6. Tillgängliggör applikationen: en webbapplikation ska vara nåbar via en webbadress, andra typer
-   av applikationer ska gå att ladda ner, installera och köra utifrån instruktionerna i `README.md`.
-7. Committa och pusha löpande.
-8. Komplettera `REFLECTION.md` i det här repots rotkatalog.
-9. Öppna en Merge Request från `main` till `lnu/submit` i det här repot. MR-beskrivningen förifylls
-   med inlämningsrapporten – fyll i den, inklusive länkarna till applikationens och din moduls
-   GitHub-repon, den andra studentens modul och hur applikationen nås eller körs.
+- **R1 – Main menu:** The application shall display a main menu, allow the player to start a new adventure or view instructions, and provide an option to quit.
+- **R2 – Input handling:** The application shall interpret keyboard input as game actions, handle valid combat and movement keys, and respond appropriately to invalid input.
+- **R3 – Exploration:** The player shall be able to explore Cat City using WASD, encounter events while exploring, and return to the main menu by pressing Q. A defeated player shall not start exploring.
+- **R4 – Player progression:** The player shall have health, experience, a level, healing potions, and gold. The player shall be able to take damage, use healing potions, gain experience, level up, and manage gold.
+- **R5 – Combat and monsters:** The player shall be able to attack monsters, defend against attacks, and use healing potions during combat. Combat shall end when either the player or monster is defeated.
+- **R6 – Combat rewards:** After surviving a monster encounter and completing combat, the player shall receive the monster's experience and gold rewards, and the victory shall be recorded. Defeated players shall not receive victory rewards.
+- **R7 – Shop:** The player shall be able to view shop items, purchase healing potions when they have enough gold, and leave the shop. Invalid choices and unsuccessful purchases shall not incorrectly change player resources.
+- **R8 – Encounter management:** The application shall select encounters, allow registered encounter handlers to execute, and reject duplicate registrations and unknown encounter types.
+- **R9 – Mate encounter:** The player shall be able to attempt to find a mate or back away. Invalid input shall be handled, and the encounter shall report whether a mate was found.
 
-## Filer i repot
+## Getting Started
 
-- `TEST_REPORT.md` – mall för din testrapport. Den ska **inte** lämnas kvar här: flytta den till
-  roten av applikationens GitHub-repo och komplettera den där innan du pushar koden.
-- `REFLECTION.md` – dina tio reflektioner och redovisningen av AI-samarbete. Komplettera den här, i
-  det här repot, innan du öppnar din Merge Request.
+### Prerequisites
+
+- Node.js 22 or newer
+- npm
+- Git
+
+The project uses ES modules and Node.js's built-in test runner.
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/SephiePaipalis/1DV610_Lab3.git
+   ```
+
+2. Enter the project directory:
+
+   ```bash
+   cd 1DV610_Lab3
+   ```
+
+3. Install the dependencies:
+
+   ```bash
+   npm install
+   ```
+
+The project uses `dice-rng-toolkit` and `game-controller`, which are installed from GitHub. Make sure their repositories are accessible to your environment.
+
+### Start the game
+
+Run the following command from the project root:
+
+```bash
+npm start
+```
+
+The main menu will appear in the terminal.
+
+## How to Play
+
+### Main menu
+
+- **1 – Start game:** Begin a new adventure.
+- **2 – View instructions:** Display the game's instructions.
+- **3 – Quit:** Exit the application.
+
+### Exploration
+
+Use the following keys to move around Cat City:
+
+| Key | Action |
+| --- | --- |
+| W | Move north |
+| A | Move west |
+| S | Move south |
+| D | Move east |
+| Q | Leave exploration and return to the main menu |
+
+Random encounters may occur while exploring.
+
+### Combat
+
+| Key | Action |
+| --- | --- |
+| 1 | Attack the monster |
+| 2 | Defend against the monster's attack |
+| 3 | Use a healing potion |
+
+Keep an eye on your health. If your health reaches zero, your adventure ends.
+
+Defeating monsters grants experience and gold. Gaining enough experience increases your level and maximum health.
+
+### Shop
+
+The shop sells healing potions for gold.
+
+- Select `1` to buy a healing potion.
+- Select `Q` to leave the shop.
+- You must have enough gold to complete a purchase.
+
+### Mate encounter
+
+- Select `1` to attempt to charm the mate.
+- Select `2` to back away.
+
+Finding a mate is chance-based.
+
+## Testing
+
+The project uses Node.js's built-in test runner and assertion module. No separate test framework is required.
+
+Run the automated test suite with:
+
+```bash
+npm test
+```
+
+The tests cover player progression, monsters, combat, input handling, exploration, encounter management, and shop and mate encounters.
+
+The test report is available in [`test_report.md`](test_report.md). It documents the test approach, expected and actual outcomes, and known third-party module issues
