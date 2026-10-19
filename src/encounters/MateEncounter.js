@@ -1,4 +1,5 @@
 import { RandomGenerator } from 'dice-rng-toolkit'
+import { styles } from '../ui/userInterface.js'
 
 const rng = new RandomGenerator()
 
@@ -10,9 +11,21 @@ const rng = new RandomGenerator()
  * @returns {boolean} True if the player found a mate.
  */
 export async function handleMateEncounter(player, { readKeypress }) {
-    console.log('\nYou encounter a charming cat!')
-    console.log('1. Try to seduce.')
-    console.log('2. Back away.')
+    console.log()
+    console.log(`${styles.pink}${styles.bold}====================================${styles.reset}`)
+    console.log(`${styles.pink}       ♥ A SPECIAL ENCOUNTER ♥${styles.reset}`)
+    console.log(`${styles.pink}${styles.bold}====================================${styles.reset}`)
+    console.log()
+    console.log(`${styles.pink}             /\\_/\\\\${styles.reset}`)
+    console.log(`${styles.pink}            ( o.o )  ♥${styles.reset}`)
+    console.log(`${styles.pink}             > ^ <${styles.reset}`)
+    console.log()
+    console.log(`${styles.cyan}You encounter a charming cat!${styles.reset}`)
+    console.log(`${styles.magenta}Perhaps this is the one you've been searching for...${styles.reset}`)
+    console.log()
+    console.log(`${styles.yellow}1.${styles.reset} ${styles.pink}Try to seduce ♥${styles.reset}`)
+    console.log(`${styles.yellow}2.${styles.reset} ${styles.cyan}Back away shyly${styles.reset}`)
+    console.log()
 
     while (true) {
         const choice = await readKeypress()
@@ -20,21 +33,31 @@ export async function handleMateEncounter(player, { readKeypress }) {
 
         if (choice === '1') {
             if (rng.nextFloat() < 0.25) {
-                console.log(
-                    'Congratulations! You found a mate! Thank you for playing!'
-                )
+                console.log(`${styles.pink}${styles.bold}♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥${styles.reset}`)
+                console.log()
+                console.log(`${styles.green}${styles.bold}CONGRATULATIONS! YOU FOUND A MATE!${styles.reset}`)
+                console.log()
+                console.log(`${styles.pink}             /\\_/\\\\${styles.reset}`)
+                console.log(`${styles.pink}            ( ♥.♥ )${styles.reset}`)
+                console.log(`${styles.pink}             > ^ <${styles.reset}`)
+                console.log()
+                console.log(`${styles.green}Love is in the air! Thank you for playing!${styles.reset}`)
+                console.log(`${styles.pink}${styles.bold}♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥${styles.reset}`)
                 return true
             }
 
-            console.log('The mate says no. Better luck next time!')
+            console.log(`${styles.red}The mate says no. Better luck next time!${styles.reset}`)
+            console.log(`${styles.cyan}Keep exploring. Love might find you again!${styles.reset}`)
             return false
         }
 
         if (choice === '2') {
-            console.log('You quietly back away and continue exploring.')
+            console.log(`${styles.cyan}You quietly back away and continue exploring.${styles.reset}`)
             return false
         }
 
-        console.log('Invalid choice. Please select 1 or 2.')
+        console.log(`${styles.red}Invalid choice. Please select 1 or 2.${styles.reset}`)
     }
 }
+
+

@@ -2,6 +2,7 @@ import { stdout as output } from 'node:process'
 import { getGameAction } from './GameInput.js'
 import { Combat } from './Combat.js'
 import { Player } from './Player.js'
+import { styles } from './ui/userInterface.js'
 
 /**
  * Runs a combat encounter until either the player or monster is defeated.
@@ -11,27 +12,20 @@ import { Player } from './Player.js'
  * @param {Function} readKeypress - Function that reads player input.
  */
 export async function runCombat(combat, player, readKeypress) {
-    const reset = '\x1b[0m'
-    const red = '\x1b[31m'
-    const green = '\x1b[32m'
-    const cyan = '\x1b[36m'
-    const yellow = '\x1b[33m'
-    const bold = '\x1b[1m'
-
     while (!combat.isOver()) {
         console.log()
-        console.log(`${red}${bold}========== COMBAT ==========${reset}`)
-        console.log(`${cyan}Your HP:${reset} ${player.getHealth()}/${player.getMaxHealth()}`)
-        console.log(`${cyan}Level:${reset} ${player.getLevel()} | XP: ${player.getExperience()}`)
-        console.log(`${green}Healing potions:${reset} ${player.getHealingPotions()}`)
-        console.log(`${red}Monster HP:${reset} ${combat.getMonsterHealth()}`)
+        console.log(`${styles.red}${styles.bold}========== COMBAT ==========${styles.reset}`)
+        console.log(`${styles.cyan}Your HP:${styles.reset} ${player.getHealth()}/${player.getMaxHealth()}`)
+        console.log(`${styles.cyan}Level:${styles.reset} ${player.getLevel()} | XP: ${player.getExperience()}`)
+        console.log(`${styles.green}Healing potions:${styles.reset} ${player.getHealingPotions()}`)
+        console.log(`${styles.red}Monster HP:${styles.reset} ${combat.getMonsterHealth()}`)
         console.log()
-        console.log(`${yellow}1.${reset} Attack`)
-        console.log(`${yellow}2.${reset} Defend`)
-        console.log(`${yellow}3.${reset} Use healing potion`)
+        console.log(`${styles.yellow}1.${styles.reset} Attack`)
+        console.log(`${styles.yellow}2.${styles.reset} Defend`)
+        console.log(`${styles.yellow}3.${styles.reset} Use healing potion`)
         console.log()
 
-        output.write(`${yellow}Choose an action: ${reset}`)
+        output.write(`${styles.yellow}Choose an action: ${styles.reset}`)
         const inputChoice = await readKeypress()
         console.log()
 
@@ -40,38 +34,39 @@ export async function runCombat(combat, player, readKeypress) {
         if (action === 'ATTACK') {
             const result = combat.attackMonster()
 
-            console.log(`${green}You deal ${result.damage} damage!${reset}`)
+            console.log(`${styles.green}You deal ${result.damage} damage!${styles.reset}`)
 
             if (!combat.isOver()) {
                 const monsterResult = combat.monsterAttack()
-                console.log(`${red}The monster deals ${monsterResult.damage} damage!${reset}`)
+                console.log(`${styles.red}The monster deals ${monsterResult.damage} damage!${styles.reset}`)
             }
         } else if (action === 'DEFEND') {
             const result = combat.monsterAttack(true)
-            console.log(`${cyan}You defend! The monster deals ${result.damage} damage.${reset}`)
+            console.log(`${styles.cyan}You defend! The monster deals ${result.damage} damage.${styles.reset}`)
         } else if (action === 'USE_POTION') {
             const result = combat.useHealingPotion()
 
             if (result.used) {
-                console.log(`${green}You used a healing potion and restored health!${reset}`)
+                console.log(`${styles.green}You used a healing potion and restored health!${styles.reset}`)
                 console.log(`Health: ${result.playerHealth}/${player.getMaxHealth()}`)
                 console.log(`Potions remaining: ${result.healingPotions}`)
             } else {
-                console.log(`${red}You cannot use a healing potion right now!${reset}`)
+                console.log(`${styles.red}You cannot use a healing potion right now!${styles.reset}`)
             }
         } else {
-            console.log(`${red}Invalid action. Choose 1, 2, or 3.${reset}`)
+            console.log(`${styles.red}Invalid action. Choose 1, 2, or 3.${styles.reset}`)
         }
     }
 
     console.log()
 
     if (player.isDefeated()) {
-        console.log(`${red}${bold}You have been defeated! Your adventure is over.${reset}`)
+        console.log(`${styles.red}${styles.bold}You have been defeated! Your adventure is over.${styles.reset}`)
     } else {
-        console.log(`${green}${bold}You defeated the monster!${reset}`)
+        console.log(`${styles.green}${styles.bold}You defeated the monster!${styles.reset}`)
     }
 
-    console.log(`${red}${bold}============================${reset}`)
+    console.log(`${styles.red}${styles.bold}============================${styles.reset}`)
 }
+
 

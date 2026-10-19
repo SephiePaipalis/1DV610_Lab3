@@ -2,6 +2,7 @@ import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { Player } from './Player.js'
 import { exploreCity } from './Exploration.js'
+import { styles } from './ui/userInterface.js'
 
 const rl = readline.createInterface({ input, output })
 
@@ -35,31 +36,25 @@ async function readKeypress() {
  * @returns {string} - Option entered by player.
  */
 async function showMenu() {
-    const reset = '\x1b[0m'
-    const cyan = '\x1b[36m'
-    const magenta = '\x1b[35m'
-    const yellow = '\x1b[33m'
-
     console.log()
-    console.log(`${magenta}================================${reset}`)
-    console.log(`${cyan}       CAT CITY ADVENTURE${reset}`)
-    console.log(`${magenta}================================${reset}`)
-    console.log(`${yellow}             /\\_/\\\\${reset}`)
-    console.log(`${yellow}            ( o.o )${reset}`)
-    console.log(`${yellow}             > ^ <${reset}`)
+    console.log(`${styles.magenta}================================${styles.reset}`)
+    console.log(`${styles.cyan}       CAT CITY ADVENTURE${styles.reset}`)
+    console.log(`${styles.magenta}================================${styles.reset}`)
+    console.log(`${styles.yellow}             /\\_/\\\\${styles.reset}`)
+    console.log(`${styles.yellow}            ( o.o )${styles.reset}`)
+    console.log(`${styles.yellow}             > ^ <${styles.reset}`)
     console.log()
-    console.log(`${cyan}  1.${reset} Start game`)
-    console.log(`${cyan}  2.${reset} View instructions`)
-    console.log(`${cyan}  3.${reset} Quit`)
+    console.log(`${styles.cyan}  1.${styles.reset} Start game`)
+    console.log(`${styles.cyan}  2.${styles.reset} View instructions`)
+    console.log(`${styles.cyan}  3.${styles.reset} Quit`)
     console.log()
 
-    output.write(`${yellow}Choose an option: ${reset}`)
+    output.write(`${styles.yellow}Choose an option: ${styles.reset}`)
     const choice = await readKeypress()
     console.log()
 
     return choice
 }
-
 
 /**
  * Runs main menu loop and handles player's choices.

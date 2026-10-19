@@ -6,6 +6,7 @@ import { handleMonsterEncounter } from './encounters/MonsterEncounter.js'
 import { handleMateEncounter } from './encounters/MateEncounter.js'
 import { Player } from './Player.js'
 import { runCombat } from './CombatInteraction.js'
+import { styles } from './ui/userInterface.js'
 
 const encounterManager = new EncounterManager(ENCOUNTERS)
 const encounterRegistry = new EncounterRegistry()
@@ -14,6 +15,7 @@ encounterRegistry.register('SHOP', handleShopEncounter)
 encounterRegistry.register('MONSTER', handleMonsterEncounter)
 encounterRegistry.register('MATE', handleMateEncounter)
 
+
 /**
  * Displays the message for a movement action.
  *
@@ -21,24 +23,20 @@ encounterRegistry.register('MATE', handleMateEncounter)
  * @returns {boolean} True if the action was a movement action.
  */
 function movePlayer(action) {
-    const reset = '\x1b[0m'
-    const cyan = '\x1b[36m'
-
     if (action === 'MOVE_NORTH') {
-        console.log(`\n${cyan}You venture north.${reset}`)
+        console.log(`\n${styles.cyan}You venture north.${styles.reset}`)
     } else if (action === 'MOVE_WEST') {
-        console.log(`\n${cyan}You venture west.${reset}`)
+        console.log(`\n${styles.cyan}You venture west.${styles.reset}`)
     } else if (action === 'MOVE_SOUTH') {
-        console.log(`\n${cyan}You venture south.${reset}`)
+        console.log(`\n${styles.cyan}You venture south.${styles.reset}`)
     } else if (action === 'MOVE_EAST') {
-        console.log(`\n${cyan}You venture east.${reset}`)
+        console.log(`\n${styles.cyan}You venture east.${styles.reset}`)
     } else {
         return false
     }
 
     return true
 }
-
 
 /**
  * Lets the player explore the city and encounter events.
@@ -47,42 +45,34 @@ function movePlayer(action) {
  * @param {Function} readKeypress - Function that reads player input.
  */
 export async function exploreCity(player, readKeypress) {
-    const reset = '\x1b[0m'
-    const cyan = '\x1b[36m'
-    const green = '\x1b[32m'
-    const yellow = '\x1b[33m'
-    const magenta = '\x1b[35m'
-    const red = '\x1b[31m'
-    const bold = '\x1b[1m'
-
     console.log()
-    console.log(`${magenta}${bold}========== CAT CITY ==========${reset}`)
-    console.log(`${cyan}You enter the mysterious streets of Cat City...${reset}`)
-    console.log(`${yellow}Use W/A/S/D to move. Press Q to return to the main menu.${reset}`)
+    console.log(`${styles.magenta}${styles.bold}========== CAT CITY ==========${styles.reset}`)
+    console.log(`${styles.cyan}You enter the streets of Cat City...${styles.reset}`)
+    console.log(`${styles.yellow}Use W/A/S/D to move. Press Q to return to the main menu.${styles.reset}`)
 
     while (!player.isDefeated()) {
         console.log()
-        console.log(`${magenta}---------- YOUR STATUS ----------${reset}`)
-        console.log(`${green}Health:${reset} ${player.getHealth()}/${player.getMaxHealth()}`)
-        console.log(`${cyan}Level:${reset} ${player.getLevel()} | XP: ${player.getExperience()}`)
-        console.log(`${green}Healing potions:${reset} ${player.getHealingPotions()}`)
-        console.log(`${yellow}Gold:${reset} ${player.getGold()}`)
-        console.log(`${magenta}---------------------------------${reset}`)
+        console.log(`${styles.magenta}---------- YOUR STATUS ----------${styles.reset}`)
+        console.log(`${styles.green}Health:${styles.reset} ${player.getHealth()}/${player.getMaxHealth()}`)
+        console.log(`${styles.cyan}Level:${styles.reset} ${player.getLevel()} | XP: ${player.getExperience()}`)
+        console.log(`${styles.green}Healing potions:${styles.reset} ${player.getHealingPotions()}`)
+        console.log(`${styles.yellow}Gold:${styles.reset} ${player.getGold()}`)
+        console.log(`${styles.magenta}---------------------------------${styles.reset}`)
         console.log()
 
-        output.write(`${yellow}Choose a direction (W/A/S/D) or Q to quit exploring: ${reset}`)
+        output.write(`${styles.yellow}Choose a direction (W/A/S/D) or Q to quit exploring: ${styles.reset}`)
         const input = await readKeypress()
         console.log()
 
         if (input.toLowerCase() === 'q') {
-            console.log(`${cyan}You leave the streets and return to the main menu.${reset}`)
+            console.log(`${styles.cyan}You leave the streets and return to the main menu.${styles.reset}`)
             return
         }
 
         const action = getGameAction(input)
 
         if (!movePlayer(action)) {
-            console.log(`${red}Invalid direction. Please use W, A, S, or D.${reset}`)
+            console.log(`${styles.red}Invalid direction. Please use W, A, S, or D.${styles.reset}`)
             continue
         }
 
@@ -108,4 +98,5 @@ export async function exploreCity(player, readKeypress) {
         }
     }
 }
+
 
