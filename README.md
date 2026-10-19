@@ -46,7 +46,7 @@ The project uses ES modules and Node.js's built-in test runner.
    npm install
    ```
 
-The project uses `dice-rng-toolkit` and `game-controller`, which are installed from GitHub. Make sure their repositories are accessible to your environment.
+The project uses `dice-rng-toolkit` (https://github.com/ThJoker3/Dice-RNG-Toolkit) and `game-controller` (https://github.com/SephiePaipalis/1DV610_Lab2), which are installed from GitHub. Make sure their repositories are accessible to your environment.
 
 ### Start the game
 
