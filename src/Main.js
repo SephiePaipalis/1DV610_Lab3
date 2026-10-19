@@ -35,16 +35,31 @@ async function readKeypress() {
  * @returns {string} - Option entered by player.
  */
 async function showMenu() {
-    console.log('=== CAT CITY ADVENTURE ===')
-    console.log('1. Start game')
-    console.log('2. View instructions')
-    console.log('3. Quit')
+    const reset = '\x1b[0m'
+    const cyan = '\x1b[36m'
+    const magenta = '\x1b[35m'
+    const yellow = '\x1b[33m'
 
-    output.write('Choose an option: ')
+    console.log()
+    console.log(`${magenta}================================${reset}`)
+    console.log(`${cyan}       CAT CITY ADVENTURE${reset}`)
+    console.log(`${magenta}================================${reset}`)
+    console.log(`${yellow}             /\\_/\\\\${reset}`)
+    console.log(`${yellow}            ( o.o )${reset}`)
+    console.log(`${yellow}             > ^ <${reset}`)
+    console.log()
+    console.log(`${cyan}  1.${reset} Start game`)
+    console.log(`${cyan}  2.${reset} View instructions`)
+    console.log(`${cyan}  3.${reset} Quit`)
+    console.log()
+
+    output.write(`${yellow}Choose an option: ${reset}`)
     const choice = await readKeypress()
     console.log()
+
     return choice
 }
+
 
 /**
  * Runs main menu loop and handles player's choices.
