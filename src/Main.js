@@ -2,7 +2,8 @@ import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { Player } from './Player.js'
 import { exploreCity } from './Exploration.js'
-import { styles } from './ui/userInterface.js'
+import { styles, displayMessage } from './ui/userInterface.js'
+import { displayMainMenu, displayInstructions } from './ui/MenuDisplay.js'
 
 const rl = readline.createInterface({ input, output })
 
@@ -36,18 +37,8 @@ async function readKeypress() {
  * @returns {string} - Option entered by player.
  */
 async function showMenu() {
-    console.log()
-    console.log(`${styles.magenta}================================${styles.reset}`)
-    console.log(`${styles.cyan}       CAT CITY ADVENTURE${styles.reset}`)
-    console.log(`${styles.magenta}================================${styles.reset}`)
-    console.log(`${styles.yellow}             /\\_/\\\\${styles.reset}`)
-    console.log(`${styles.yellow}            ( o.o )${styles.reset}`)
-    console.log(`${styles.yellow}             > ^ <${styles.reset}`)
-    console.log()
-    console.log(`${styles.cyan}  1.${styles.reset} Start game`)
-    console.log(`${styles.cyan}  2.${styles.reset} View instructions`)
-    console.log(`${styles.cyan}  3.${styles.reset} Quit`)
-    console.log()
+
+    displayMainMenu()
 
     output.write(`${styles.yellow}Choose an option: ${styles.reset}`)
     const choice = await readKeypress()
@@ -66,7 +57,7 @@ async function runGame() {
         const choice = await showMenu()
 
         if (choice === '1') {
-            console.log('Starting a new adventure...')
+            displayMessage('Starting a new adventure...')
             const player = new Player()
             const foundMate = await exploreCity(player, readKeypress)
 
@@ -75,35 +66,12 @@ async function runGame() {
             }
 
         } else if (choice === '2') {
-            console.log()
-            console.log(`${styles.magenta}${styles.bold}================================${styles.reset}`)
-            console.log(`${styles.cyan}          HOW TO PLAY${styles.reset}`)
-            console.log(`${styles.magenta}${styles.bold}================================${styles.reset}`)
-            console.log()
-            console.log(`${styles.yellow}Your adventure${styles.reset}`)
-            console.log('Explore Cat City and discover what its streets hold.')
-            console.log()
-            console.log(`${styles.yellow}Movement${styles.reset}`)
-            console.log(`${styles.cyan}W${styles.reset} - Move north`)
-            console.log(`${styles.cyan}A${styles.reset} - Move west`)
-            console.log(`${styles.cyan}S${styles.reset} - Move south`)
-            console.log(`${styles.cyan}D${styles.reset} - Move east`)
-            console.log(`${styles.cyan}Q${styles.reset} - Leave exploration and return to the main menu`)
-            console.log()
-            console.log(`${styles.yellow}Survival${styles.reset}`)
-            console.log('Watch your health during combat.')
-            console.log('Use healing potions when you need them.')
-            console.log('Visit shops to buy items with your gold.')
-            console.log()
-            console.log(`${styles.pink}Your goal${styles.reset}`)
-            console.log('Explore the city and find a charming cat to become your mate!')
-            console.log()
-            console.log(`${styles.magenta}================================${styles.reset}`)
+            displayInstructions()
         } else if (choice === '3') {
-            console.log('Thanks for playing!')
+            displayMessage('Thanks for playing!')
             isRunning = false
         } else {
-            console.log('Invalid choice. Please select 1, 2, or 3.')
+            displayMessage('Invalid choice. Please select 1, 2, or 3.')
         }
     }
 }

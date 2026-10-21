@@ -11,3 +11,12 @@ export const styles = {
     green: '\x1b[32m',
     bold: '\x1b[1m'
 }
+
+/**
+ * Displays a message to the player.
+ *
+ * @param {string} message - The message to display.
+ */
+export function displayMessage(message) {
+    console.log(message)
+}
